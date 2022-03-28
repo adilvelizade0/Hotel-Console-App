@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 
 namespace Hotel_Console_App.Models
 {
@@ -28,6 +29,32 @@ namespace Hotel_Console_App.Models
         {
             Array.Resize(ref _rooms,_rooms.Length + 1);
             _rooms[^1] = room;
+        }
+
+        public static void RemoveRoom(int? id)
+        {
+            try
+            {
+                if (id is null)
+                {
+                    throw new NullReferenceException("\n❌  Id cannot be null!");
+                }
+
+                var room = Array.Find(_rooms, room => room.RoomId == id);
+            
+                if (room is null)
+                {
+                    throw new NullReferenceException("\n❌  No results found");
+                }
+
+                _rooms = _rooms.Length == 1 ? Array.Empty<Room>() : _rooms.Where(room => room.RoomId != id).ToArray();
+                Console.WriteLine("\n✅ The book was successfully deleted!");
+            }
+            catch (Exception e)
+            {
+                Console.Clear();
+                Console.WriteLine(e.Message);
+            }
         }
 
         public static void MakeReservation(int? id)
@@ -72,7 +99,7 @@ namespace Hotel_Console_App.Models
             
             foreach (var room in _rooms)
             {
-                Console.WriteLine( $"\nName: {room.Name} 🏨\nPrice: {room.Price.ToString()} 💰\nPerson Capacity: {room.PersonCapacity.ToString()} 👥\nReserve: {(room.IsAvailable ? " ✅ " : " ❌ ")}\n");
+                Console.WriteLine( $"\nName: {room.Name} 🏨\nPrice: {room.Price.ToString()} {(room.Price == 0 ? "free for 24 hours" : "")} 💰\nPerson Capacity: {room.PersonCapacity.ToString()} {(room.PersonCapacity == 0 ? "for stock 📦" : "for people 👥")}\nReserve: {(room.IsAvailable ? " ✅ " : " ❌ ")}\n");
             }
         }
         
